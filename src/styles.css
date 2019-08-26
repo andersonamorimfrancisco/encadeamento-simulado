@@ -4,8 +4,17 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root,
+.App {
+  height: 100%;
+}
 body {
   font-family: "Roboto", sans-serif;
+}
+.App {
+  display: flex;
 }
 header {
   display: flex;
@@ -14,7 +23,14 @@ header {
   margin-bottom: 30px;
   margin-top: 50px;
 }
-.second-line {
-  display: flex;
-  justify-content: space-between;
+
+.leftBar {
+  width: 30%;
+  max-width: 200px;
+  height: 100%;
+  border-right: 1px solid lightgrey;
+  padding: 10px;
+}
+.main {
+  width: 100%;
 }

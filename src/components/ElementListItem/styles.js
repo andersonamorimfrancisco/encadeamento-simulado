@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   border: 1px solid lightgrey;
-  border-radius: 8px;
+  border-radius: 4px;
   margin-bottom: 4px;
   height: 40px;
   line-height: 40px;

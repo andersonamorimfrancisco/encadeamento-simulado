@@ -16,15 +16,17 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <div className="App">
-      <header>
-        <h1>Encadeamento Simulado</h1>
-      </header>
-      <StackView state={state} dispatch={dispatch} actions={actions} />
-
-      <div className="second-line">
-        <ElementList state={state} dispatch={dispatch} actions={actions} />
+      <div className="leftBar">
         <StackDescriptors state={state} />
+        <ElementList state={state} dispatch={dispatch} actions={actions} />
       </div>
+      <div className="main">
+        <header>
+          <h1>Encadeamento Simulado</h1>
+        </header>
+        <StackView state={state} dispatch={dispatch} actions={actions} />
+      </div>
+
       <FooterBar />
     </div>
   );
