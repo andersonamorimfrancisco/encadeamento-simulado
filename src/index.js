@@ -3,8 +3,10 @@ import ReactDOM from "react-dom";
 
 import ElementList from "./components/ElementList";
 import StackView from "./components/StackView";
-import * as actions from "./store/actions";
+import StackDescriptors from "./components/StackDescriptors";
+import FooterBar from "./components/FooterBar";
 
+import * as actions from "./store/actions";
 import initialState from "./store/initialState";
 import reducer from "./store/reducer";
 
@@ -14,9 +16,16 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <div className="App">
-      <div>Próximo livre: {state.freeStack[0].pos}</div>
+      <header>
+        <h1>Encadeamento Simulado</h1>
+      </header>
       <StackView state={state} dispatch={dispatch} actions={actions} />
-      <ElementList state={state} dispatch={dispatch} actions={actions} />
+
+      <div className="second-line">
+        <ElementList state={state} dispatch={dispatch} actions={actions} />
+        <StackDescriptors state={state} />
+      </div>
+      <FooterBar />
     </div>
   );
 }

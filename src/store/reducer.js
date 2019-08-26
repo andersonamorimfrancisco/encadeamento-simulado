@@ -25,12 +25,50 @@ function insertElementInPos(elements, elementToInsert, pos) {
 
 function removePositionElement(elements, position) {
   return elements.map(element => {
+    element.next = 0;
+    element.nextValue = null;
     if (element.pos === position) {
       element.element = null;
+      element.next = 0;
+      element.nextValue = null;
     }
     return element;
   });
 }
+
+function getStart(elements) {
+  let start = { pos: 6, value: 6 };
+  for (let i = 0; i < elements.length; i++) {
+    const item = elements[i];
+
+    if (item.element) {
+      if (item.element.id < start.value) {
+        start = { pos: item.pos, value: item.element.id };
+      }
+    }
+  }
+  if (start.pos === 6) {
+    start = { pos: 0, value: 0 };
+  }
+  return start;
+}
+
+function getEnd(elements) {
+  let End = { pos: 0, value: 0 };
+  for (let i = 0; i < elements.length; i++) {
+    const item = elements[i];
+
+    if (item.element) {
+      if (item.element.id > End.value) {
+        End = { pos: item.pos, value: item.element.id };
+      }
+    }
+  }
+
+  return End;
+}
+
+// REDUCER
 
 export default function reducer(state, action) {
   const { type, data } = action;
@@ -51,7 +89,8 @@ export default function reducer(state, action) {
       ...state,
       elements: newElements,
       freeStack: newFreeStack,
-      stack: newStack
+      stack: newStack,
+      len: state.len = state.len + 1
     };
   }
 
@@ -64,8 +103,42 @@ export default function reducer(state, action) {
       ...state,
       elements: newElements,
       freeStack: newFreeStack,
-      stack: newStack
+      stack: newStack, len: state.len = state.len - 1
     };
+  }
+  if (type === "UPDATE_POINTERS") {
+    const newStack = state.stack;
+    for (let i = 0; i < newStack.length; i++) {
+      const fixedItem = newStack[i];
+      const fixedItemHasElement = fixedItem.element ? true : false;
+
+      if (fixedItemHasElement) {
+        for (let j = 0; j < newStack.length; j++) {
+          const tempItem = newStack[j];
+          const tempItemHasElement = tempItem.element ? true : false;
+
+          if (tempItemHasElement) {
+            if (tempItem.element.id < fixedItem.element.id) {
+              if (
+                !tempItem.nextValue ||
+                tempItem.nextValue > fixedItem.element.id
+              ) {
+                newStack[j].next = fixedItem.pos;
+                newStack[j].nextValue = fixedItem.element.id;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return { ...state };
+  }
+  if (type === "UPDATE_DESCRIPTORS") {
+    const newNextFree = state.freeStack[0] ? state.freeStack[0].pos : 0;
+    const newStart = getStart(state.stack);
+    const newEnd = getEnd(state.stack);
+    return { ...state, nextFree: newNextFree, start: newStart, end: newEnd };
   }
   return state;
 }

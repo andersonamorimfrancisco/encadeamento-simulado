@@ -13,6 +13,7 @@ export default function StackView({ state, dispatch, actions }) {
           <StackViewItem
             key={item.pos}
             data={item}
+            state={state}
             dispatch={dispatch}
             actions={actions}
           />

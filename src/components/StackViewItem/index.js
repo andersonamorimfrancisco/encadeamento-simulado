@@ -1,17 +1,40 @@
 import React from "react";
 
-import { Container } from "./styles";
+import {
+  Container,
+  Text,
+  Pointer,
+  Details,
+  NextIndicator,
+  StartIndicator,
+  EndIndicator
+} from "./styles";
 
-export default function StackViewItem({ data = {}, dispatch, actions }) {
-  const { element } = data;
+export default function StackViewItem({ data = {}, state, dispatch, actions }) {
+  const { pos, element } = data;
+  const { nextFree, start, end, alphabetical } = state;
+  const { updatePointers, removeStackItem, updateDescriptors } = actions;
 
   async function handleContainerClick(data) {
-    await dispatch(actions.removeStackItem(data));
+    if (data.element) {
+      await dispatch(removeStackItem(data));
+      await dispatch(updatePointers());
+      await dispatch(updateDescriptors());
+    }
   }
 
-  const text = element ? element.text : null;
+  const hasElement = element ? true : false;
+  const text = !hasElement ? null : alphabetical ? element.name : element.text;
 
   return (
-    <Container onClick={() => handleContainerClick(data)}>{text}</Container>
+    <Container onClick={() => handleContainerClick(data)}>
+      <Details>
+        <Text>{text}</Text>
+        <Pointer>{data.next}</Pointer>
+      </Details>
+      {nextFree === pos ? <NextIndicator>Próximo</NextIndicator> : null}
+      {start.pos === pos ? <StartIndicator>Inicio</StartIndicator> : null}
+      {end.pos === pos ? <EndIndicator>Final</EndIndicator> : null}
+    </Container>
   );
 }
