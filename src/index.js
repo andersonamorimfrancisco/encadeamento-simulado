@@ -17,6 +17,14 @@ function App() {
   return (
     <div className="App">
       <div className="leftBar">
+        <button
+          className="showName"
+          onClick={() => {
+            dispatch({ type: "TOGGLENAME" });
+          }}
+        >
+          {state.alphabetical ? "Numérico" : "Alfabético"}
+        </button>
         <StackDescriptors state={state} />
         <ElementList state={state} dispatch={dispatch} actions={actions} />
       </div>

@@ -34,3 +34,16 @@ header {
 .main {
   width: 100%;
 }
+.showName {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  color: #3c6382;
+}
+.showName:hover {
+  background-color: #3c6382;
+  color: #fff;
+}

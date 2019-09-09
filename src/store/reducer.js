@@ -18,6 +18,7 @@ function insertElementInPos(elements, elementToInsert, pos) {
   return elements.map(element => {
     if (element.pos === pos) {
       element.element = elementToInsert;
+      element.next = 0;
     }
     return element;
   });
@@ -25,7 +26,7 @@ function insertElementInPos(elements, elementToInsert, pos) {
 
 function removePositionElement(elements, position) {
   return elements.map(element => {
-    element.next = 0;
+    //element.next = 0;
     element.nextValue = null;
     if (element.pos === position) {
       element.element = null;
@@ -72,8 +73,13 @@ function getEnd(elements) {
 
 export default function reducer(state, action) {
   const { type, data } = action;
-
+  if (type === "TOGGLENAME") {
+    return { ...state, alphabetical: !state.alphabetical };
+  }
   if (type === "INSERT_ITEM_ON_STACK") {
+    const newRemovedElements = state.removedElements.filter(element => {
+      return element.pos !== state.freeStack[0].pos;
+    });
     const newStack = insertElementInPos(
       state.stack,
       data,
@@ -87,10 +93,11 @@ export default function reducer(state, action) {
 
     return {
       ...state,
+      removedElements: newRemovedElements,
       elements: newElements,
       freeStack: newFreeStack,
       stack: newStack,
-      len: state.len = state.len + 1
+      len: (state.len = state.len + 1)
     };
   }
 
@@ -99,15 +106,20 @@ export default function reducer(state, action) {
     const newElements = inserElementOnArrayAfter(state.elements, data.element);
     const newFreeStack = inserElementOnArrayAfter(state.freeStack, newPos);
     const newStack = removePositionElement(state.stack, data.pos);
+    const newRemovedElements = [data, ...state.removedElements];
+
     return {
       ...state,
+      removedElements: newRemovedElements,
       elements: newElements,
       freeStack: newFreeStack,
-      stack: newStack, len: state.len = state.len - 1
+      stack: newStack,
+      len: (state.len = state.len - 1)
     };
   }
   if (type === "UPDATE_POINTERS") {
     const newStack = state.stack;
+
     for (let i = 0; i < newStack.length; i++) {
       const fixedItem = newStack[i];
       const fixedItemHasElement = fixedItem.element ? true : false;
@@ -131,6 +143,12 @@ export default function reducer(state, action) {
         }
       }
     }
+    if (state.removedElements.length > 0) {
+      for (let i = 0; i < state.removedElements.length - 1; i++) {
+        newStack[state.removedElements[i].pos - 1].next =
+          state.removedElements[i + 1].pos;
+      }
+    }
 
     return { ...state };
   }
@@ -138,6 +156,7 @@ export default function reducer(state, action) {
     const newNextFree = state.freeStack[0] ? state.freeStack[0].pos : 0;
     const newStart = getStart(state.stack);
     const newEnd = getEnd(state.stack);
+    state.stack[newEnd.pos - 1].next = 0;
     return { ...state, nextFree: newNextFree, start: newStart, end: newEnd };
   }
   return state;
